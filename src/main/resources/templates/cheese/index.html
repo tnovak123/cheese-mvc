@@ -20,10 +20,10 @@
 
     <table class="table">
         <tr>
-            <td>Name</td><td>:</td><td>Description</td>:<td>Type</td>
+            <td>Name</td><td>:</td><td>Description</td>:<td>Category</td>
         </tr>
         <tr th:each="cheese : ${cheeses}">
-           <td th:text="${cheese.name}">cheese</td><td>:</td><td th:text="${cheese.description}">description</td>:<td th:text="${cheese.type.name}">type</td>
+           <td th:text="${cheese.name}">cheese</td><td>:</td><td th:text="${cheese.description}">description</td>:<td th:text="${cheese.category.name}">category</td>
         </tr>
     </table>
 

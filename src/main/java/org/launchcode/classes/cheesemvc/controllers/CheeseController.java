@@ -1,7 +1,8 @@
 package org.launchcode.classes.cheesemvc.controllers;
 
+import org.launchcode.classes.cheesemvc.models.Category;
 import org.launchcode.classes.cheesemvc.models.Cheese;
-import org.launchcode.classes.cheesemvc.models.CheeseType;
+import org.launchcode.classes.cheesemvc.models.data.CategoryDao;
 import org.launchcode.classes.cheesemvc.models.data.CheeseDao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -13,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import javax.validation.Valid;
+import java.util.List;
 
 
 @Controller
@@ -21,6 +23,9 @@ public class CheeseController {
 
     @Autowired
     private CheeseDao cheeseDao;
+
+    @Autowired
+    private CategoryDao categoryDao;
 
     // Request path: /cheese
     @RequestMapping(value = "")
@@ -36,19 +41,21 @@ public class CheeseController {
     public String displayAddCheeseForm(Model model) {
         model.addAttribute("title", "Add Cheese");
         model.addAttribute(new Cheese());
-        model.addAttribute("cheeseTypes", CheeseType.values());
+        model.addAttribute("categories", categoryDao.findAll());
         return "cheese/add";
     }
 
     @RequestMapping(value = "add", method = RequestMethod.POST)
-    public String processAddCheeseForm(Model model, @ModelAttribute @Valid Cheese newCheese, Errors errors) {
+    public String processAddCheeseForm(Model model, @ModelAttribute @Valid Cheese newCheese, Errors errors, @RequestParam int categoryId) {
 
         if (errors.hasErrors()){
             model.addAttribute("title", "Add Cheese");
-            //model.addAttribute(new Cheese());
+            model.addAttribute("categories", categoryDao.findAll());
             return "cheese/add";
         }
 
+        Category cat = categoryDao.findOne(categoryId);
+        newCheese.setCategory(cat);
         cheeseDao.save(newCheese);
         return "redirect:";
     }
@@ -68,6 +75,16 @@ public class CheeseController {
         }
 
         return "redirect:";
+    }
+
+    @RequestMapping(value = "category", method = RequestMethod.GET)
+    public String category(Model model, @RequestParam int id) {
+
+        Category cat = categoryDao.findOne(id);
+        List<Cheese> cheeses = cat.getCheeses();
+        model.addAttribute("cheeses", cheeses);
+        model.addAttribute("title", "Cheeses in Category: " + cat.getName());
+        return "cheese/index";
     }
 
 }
