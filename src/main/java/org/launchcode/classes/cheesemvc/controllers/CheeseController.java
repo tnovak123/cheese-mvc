@@ -4,14 +4,12 @@ import org.launchcode.classes.cheesemvc.models.Category;
 import org.launchcode.classes.cheesemvc.models.Cheese;
 import org.launchcode.classes.cheesemvc.models.data.CategoryDao;
 import org.launchcode.classes.cheesemvc.models.data.CheeseDao;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.Errors;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.List;
@@ -54,7 +52,8 @@ public class CheeseController {
             return "cheese/add";
         }
 
-        Category cat = categoryDao.findOne(categoryId);
+        Category cat = categoryDao.findById(categoryId).get();
+        // Category cat = categoryDao.findOne(categoryId);
         newCheese.setCategory(cat);
         cheeseDao.save(newCheese);
         return "redirect:";
@@ -80,7 +79,7 @@ public class CheeseController {
     @RequestMapping(value = "category", method = RequestMethod.GET)
     public String category(Model model, @RequestParam int id) {
 
-        Category cat = categoryDao.findOne(id);
+        Category cat = categoryDao.findById(id).get();
         List<Cheese> cheeses = cat.getCheeses();
         model.addAttribute("cheeses", cheeses);
         model.addAttribute("title", "Cheeses in Category: " + cat.getName());

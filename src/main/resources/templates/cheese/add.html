@@ -18,8 +18,8 @@
         <span th:errors="*{description}" style="error"></span>
     </div>
     <div class="form-group">
-        <label th:for="category">Category</label>
-        <select name="categoryID">
+        <label th:for="categoryId">Category</label>
+        <select name="categoryId">
             <option th:each="category : ${categories}" th:text="${category.name}" th:value="${category.id}"></option>
         </select>
     </div>
