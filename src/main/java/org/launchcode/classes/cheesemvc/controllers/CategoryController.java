@@ -18,9 +18,12 @@ public class CategoryController {
     @Autowired
     CategoryDao categoryDao;
 
+    private static String area = "category";
+
     @RequestMapping(value = "", method = RequestMethod.GET)
     public String index(Model model, @RequestParam(defaultValue = "1") int id) {
         model.addAttribute("title", "Categories");
+        model.addAttribute("area", area);
         model.addAttribute("categories", categoryDao.findAll());
         return "category/index";
     }
@@ -29,6 +32,7 @@ public class CategoryController {
     public String add(Model model) {
         model.addAttribute(new Category());
         model.addAttribute("title", "Add Category");
+        model.addAttribute("area", area);
         return "category/add";
     }
 
@@ -37,10 +41,29 @@ public class CategoryController {
 
         if (errors.hasErrors()) {
             model.addAttribute("title", "Add Category");
+            model.addAttribute("area", area);
             return "category/add";
         }
 
         categoryDao.save(category);
+        return "redirect:";
+    }
+
+    @RequestMapping(value = "remove", method = RequestMethod.GET)
+    public String displayRemoveCategoryForm(Model model) {
+        model.addAttribute("categories", categoryDao.findAll());
+        model.addAttribute("area", area);
+        model.addAttribute("title", "Remove Category");
+        return "category/remove";
+    }
+
+    @RequestMapping(value = "remove", method = RequestMethod.POST)
+    public String processRemoveCategoryForm(@RequestParam int[] categoryIds) {
+
+        for (int categoryId : categoryIds) {
+            categoryDao.deleteById(categoryId);
+        }
+
         return "redirect:";
     }
 

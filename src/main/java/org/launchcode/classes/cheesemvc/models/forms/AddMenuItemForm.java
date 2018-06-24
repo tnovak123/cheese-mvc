@@ -44,4 +44,8 @@ public class AddMenuItemForm {
     public Menu getMenu(){
         return menu;
     }
+
+    public Iterable<Cheese> getCheeses() {
+        return cheeses;
+    }
 }

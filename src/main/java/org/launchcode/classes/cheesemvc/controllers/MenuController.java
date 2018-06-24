@@ -23,10 +23,13 @@ public class MenuController {
     @Autowired
     CheeseDao cheeseDao;
 
+    private static String area = "menu";
+
     @RequestMapping(value = "")
     public String index(Model model){
 
         model.addAttribute("title", "Menus");
+        model.addAttribute("area", area);
         model.addAttribute("menus", menuDao.findAll());
 
         return "menu/index";
@@ -36,6 +39,7 @@ public class MenuController {
     public String add(Model model) {
 
         model.addAttribute("title", "Add Menu");
+        model.addAttribute("area", area);
         model.addAttribute(new Menu());
 
         return "menu/add";
@@ -46,6 +50,7 @@ public class MenuController {
 
         if (errors.hasErrors()){
             model.addAttribute("title", "Add Menu");
+            model.addAttribute("area", area);
             return "menu/add";
         }
 
@@ -75,6 +80,7 @@ public class MenuController {
 
         model.addAttribute("title", "Add item to menu: " + menu.getName());
         model.addAttribute("form", form);
+        model.addAttribute("area", area);
         return "menu/add-item";
     }
 
@@ -82,7 +88,9 @@ public class MenuController {
     public String addItem(Model model, @ModelAttribute @Valid AddMenuItemForm form, Errors errors){
 
         if (errors.hasErrors()){
+            model.addAttribute("title", "Add item to menu: " + menuDao.findById(form.getMenuId()).get().getName());
             model.addAttribute("form", form);
+            model.addAttribute("area", area);
             return "menu/add-item";
         }
 
@@ -93,4 +101,23 @@ public class MenuController {
 
         return "redirect:/menu/view/" + theMenu.getId();
     }
+
+    @RequestMapping(value = "remove", method = RequestMethod.GET)
+    public String displayRemoveMenuForm(Model model) {
+        model.addAttribute("menus", menuDao.findAll());
+        model.addAttribute("area", area);
+        model.addAttribute("title", "Remove Menus");
+        return "menu/remove";
+    }
+
+    @RequestMapping(value = "remove", method = RequestMethod.POST)
+    public String processRemoveMenuForm(@RequestParam int[] menuIds) {
+
+        for (int menuId : menuIds) {
+            cheeseDao.deleteById(menuId);
+        }
+
+        return "redirect:";
+    }
+
 }

@@ -25,12 +25,15 @@ public class CheeseController {
     @Autowired
     private CategoryDao categoryDao;
 
+    private static String area = "cheese";
+
     // Request path: /cheese
     @RequestMapping(value = "")
     public String index(Model model) {
 
         model.addAttribute("cheeses", cheeseDao.findAll());
         model.addAttribute("title", "My Cheeses");
+        model.addAttribute("area", area);
 
         return "cheese/index";
     }
@@ -38,6 +41,7 @@ public class CheeseController {
     @RequestMapping(value = "add", method = RequestMethod.GET)
     public String displayAddCheeseForm(Model model) {
         model.addAttribute("title", "Add Cheese");
+        model.addAttribute("area", area);
         model.addAttribute(new Cheese());
         model.addAttribute("categories", categoryDao.findAll());
         return "cheese/add";
@@ -48,6 +52,7 @@ public class CheeseController {
 
         if (errors.hasErrors()){
             model.addAttribute("title", "Add Cheese");
+            model.addAttribute("area", area);
             model.addAttribute("categories", categoryDao.findAll());
             return "cheese/add";
         }
@@ -62,6 +67,7 @@ public class CheeseController {
     @RequestMapping(value = "remove", method = RequestMethod.GET)
     public String displayRemoveCheeseForm(Model model) {
         model.addAttribute("cheeses", cheeseDao.findAll());
+        model.addAttribute("area", area);
         model.addAttribute("title", "Remove Cheese");
         return "cheese/remove";
     }
@@ -83,6 +89,7 @@ public class CheeseController {
         List<Cheese> cheeses = cat.getCheeses();
         model.addAttribute("cheeses", cheeses);
         model.addAttribute("title", "Cheeses in Category: " + cat.getName());
+        model.addAttribute("area", area);
         return "cheese/index";
     }
 
