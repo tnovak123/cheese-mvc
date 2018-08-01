@@ -13,7 +13,7 @@
 
     <p th:unless="${cheeses.size()}"><i>No cheeses yet</i></p>
 
-    <p><a th:href="'/menu/add-item/' + ${menuId}">Add Cheese</a></p>
+    <p><a th:href="'/menu/add-item/' + ${menuId}">Add Cheese</a>|<a th:href="'/menu/remove-item/' + ${menuId}">Remove Cheese</a></p>
 
 </body>
 </html>

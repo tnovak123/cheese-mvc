@@ -5,6 +5,7 @@ import org.launchcode.classes.cheesemvc.models.Menu;
 import org.launchcode.classes.cheesemvc.models.data.CheeseDao;
 import org.launchcode.classes.cheesemvc.models.data.MenuDao;
 import org.launchcode.classes.cheesemvc.models.forms.AddMenuItemForm;
+import org.launchcode.classes.cheesemvc.models.forms.RemoveMenuItemForm;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -12,6 +13,7 @@ import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.List;
 
 @Controller
 @RequestMapping(value = "menu")
@@ -114,10 +116,43 @@ public class MenuController {
     public String processRemoveMenuForm(@RequestParam int[] menuIds) {
 
         for (int menuId : menuIds) {
-            cheeseDao.deleteById(menuId);
+            menuDao.deleteById(menuId);
         }
 
         return "redirect:";
+    }
+    @RequestMapping(value = "remove-item/{menuId}", method = RequestMethod.GET)
+    public String removeItem(Model model, @PathVariable int menuId){
+
+        Menu menu = menuDao.findById(menuId).get();
+        List<Cheese> cheeses = menu.getCheeses();
+
+        RemoveMenuItemForm form = new RemoveMenuItemForm(cheeses, menu);
+
+        model.addAttribute("title", "Remove item to menu: " + menu.getName());
+        model.addAttribute("form", form);
+        model.addAttribute("area", area);
+        return "menu/remove-item";
+    }
+
+    @RequestMapping(value = "remove-item", method = RequestMethod.POST)
+    public String removeItem(Model model, @RequestParam int[] cheeseIds, @ModelAttribute @Valid RemoveMenuItemForm form, Errors errors){
+
+        if (errors.hasErrors()){
+            model.addAttribute("title", "Remove item to menu: " + form.getMenu().getName());
+            model.addAttribute("form", form);
+            model.addAttribute("area", area);
+            return "menu/remove-item";
+        }
+
+        Menu theMenu = menuDao.findById(form.getMenuId()).get();
+        for(int id : cheeseIds){
+            theMenu.removeItem(cheeseDao.findById(id).get());
+        }
+
+        menuDao.save(theMenu);
+
+        return "redirect:/menu/view/" + theMenu.getId();
     }
 
 }
